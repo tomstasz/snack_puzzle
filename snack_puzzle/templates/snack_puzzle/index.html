@@ -1,0 +1,125 @@
+{% extends 'snack_puzzle/base.html'%}
+
+{% block content %}
+    <div class="container">
+        <div class="col-sm-12">
+            <div class="alert alert-link">
+                {% if request.user.is_authenticated %}
+                     <div class="float-right">Witaj {{ request.user.username }} <a href="{% url 'logout' %}">Wyloguj</a></div>
+                {% else %}
+                   <div class="float-right"><a href="{% url 'register' %}">Zarejestruj się</a>
+                    <a href="{% url 'login' %}">Zaloguj się</a><br>
+                   </div>
+                {% endif %}
+                <h1 style="color: darkslateblue; font-weight: bold">Snack puzzle</h1>
+            <div class="float-right">
+                Jedynie zalogowani użytkownicy mogą dodawać nowe przepisy.
+                <a href="{% url 'add_recipe' %}">Dodaj przepis</a>
+            </div>
+                <h5 style="color: crimson">Dish, as you wish!</h5>
+                <hr>
+                <p>Wybież składniki, którymi aktualnie dysponujesz i sprawdź, jakie dania możesz z nich przygotować.
+                    <br>
+                    <br>
+                Przykładowe przepisy:<br>
+                1 szt. masła + 2 łyżki soli + 1 szt. szosnku = masło czosnkowe<br>
+                100 dag jabłek + 2 litry wody + 1 łyżka cukru + 1 łyżka cukru waniliowego = kompot jabłkowy</p>
+
+            </div>
+        </div>
+    </div>
+    <h1>Kategorie składników</h1>
+    <div class="col-sm-6 text-right">
+            <button class="btn btn-primary" type="button" id="check-btn">Usuń zaznaczenia</button>
+            <button class="btn btn-primary" type="button" id="hide-btn">Zamknij wszystkie zakładki</button>
+    </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <ul id="category_list">
+                {% for category in categories %}
+                    <a data-id="{{ category.id}}"
+                       aria-expanded="false"
+                       class="btn btn-info btn-block"
+                       type="button"
+                       data-toggle="collapse"
+                       aria-controls="{{ slug }}{{ category.id }}" href="#{{ slug}}{{category.id }}">{{ category.get_name_display }}</a>
+                    <div class="collapse ing-div" id="{{ slug }}{{ category.id }}">
+                    <div class="container">
+                    <ul class="row">
+                    {% for ing in category.ingredient_set.all %}
+
+                        <li class="col-sm-6" style="padding: 10px; list-style-type: square">
+                        <div class="form-check form-check-inline">
+                        <div class="form-inline"></div>
+                            {% load thumbnail %}
+                            <label class="mr-3">{{ ing.name }}
+                            <a id="link_{{ ing.id }}" href="{{ ing.get_absolute_url }}">
+                                <img src="{{ing.path|thumbnail_url:'thumb' }}" class="rounded-circle mr-5">
+                            </a>
+                            </label>
+
+
+                            {% csrf_token %}
+
+
+
+                            <input type="number" step="0.1" min="0" id="num_{{ ing.id }}" class="form-control form-control-sm num" placeholder="0">
+                            <select class="form-control form-control-sm select" id="select_{{ ing.id }}">
+                                <option value="" selected>----</option>
+                                <option value="dag">dag</option>
+                                <option value="g">g</option>
+                                <option value="l">litr</option>
+                                <option value="łyżecz.">łyżeczka</option>
+                                <option value="łyż.">łyżka</option>
+                                <option value="opak.">opak.</option>
+                                <option value="pęcz.">pęczek</option>
+                                <option value="szczypt.">szczypta</option>
+                                <option value="szklan.">szklanka</option>
+                                <option value="szt.">szt.</option>
+                            </select>
+
+                            <input class="form-check-input check ml-4 hidden" type="checkbox" id="{{ ing.id }}" value="" data-name="{{ ing.name }}">
+
+                        </div>
+                        </li>
+
+                    {% empty %}
+                        <p>brak składników</p>
+                    {% endfor %}
+                    </ul>
+                    </div>
+                    </div>
+                {% endfor %}
+                </ul>
+            </div>
+
+
+            <div class="col-sm-6">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <nav id="myscrollspy">
+                                <ul id="recipe_nav">
+                                </ul>
+                            </nav>
+
+                        </div>
+
+                        <div class="col-sm-9">
+
+                            <div id="scroll_area" data-spy="scroll" data-target="#myscrollspy" data-offset="0">
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+
+{% endblock %}
+
+
