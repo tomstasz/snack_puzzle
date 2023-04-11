@@ -1,4 +1,4 @@
-# snack_puzzle
+# snack_puzzle (python3.8)
 The application allows users to check which recipes can be prepared with ingredients at hand. 
 The application will inform us when we are close to generating any recipe (together with the amount of lacking ingredient). 
 Logged in users can add their own recipes.<br>  
